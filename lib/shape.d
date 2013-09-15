@@ -92,11 +92,11 @@ class Sphere: Shape {
 }
 
 
-class Triangle: Shape {
+final class Triangle: Shape {
     P a, b, c;
     V  ab, ac, abXn, acXn;
     N n;
-    double abDacXn, acDabXn;
+    immutable double abDacXn, acDabXn;
     IMaterial material_;
     IColor color;
     this(P a, P b, P c, IColor color=Color.white) {
@@ -132,17 +132,15 @@ class Triangle: Shape {
         if (denom * denom < 0.00001)
             return none;
         auto t = (ao & n) / denom;
+        if (t < 0)
+            return none;
         auto tdo = r.direction.scale(t) - ao;
         auto p = (tdo & acXn) / abDacXn;
-        auto q = (tdo & abXn) / acDabXn;
-        if (t > 0 && (0 <= p && p <= 1)
-            && (0 <= q && q <= 1)
-            && (p + q <= 1)) {
-
-            return MBDist(t);
-        } else {
+        if (p < 0 || p > 1)
             return none;
-        }
-
+        auto q = (tdo & abXn) / acDabXn;
+        if (q < 0 || q > 1 || (p + q) > 1)
+            return none;
+        return MBDist(t);
     }
 }

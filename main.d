@@ -37,7 +37,7 @@ void main(string[] argv){
     auto position = V.create(50, 50, 80);
     auto up = V.create(0, 1, 0);
     double dist = 80, w = 40, h = 30;
-    auto c = new Camera(position, up, dist, w, h);
+    auto c = new Camera(position, up, dist, w, h, 120, 90);
     scene = new Scene(c, Color.white.scaleColor(0.1));
 
     foreach(s; shapes)
@@ -52,8 +52,8 @@ void main(string[] argv){
 }
 
 void init(string[] argv){
-    const w_width = 640;
-    const w_heigth = 480;
+    const w_width = 120;
+    const w_heigth = 90;
     const w_title = "D-ray";
     DerelictGL3.load();
     DerelictFreeGLUT.load();

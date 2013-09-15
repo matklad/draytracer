@@ -8,15 +8,18 @@ alias V P;
 alias NVec!double N;
 
 class Vec(T) {
-    immutable double EPS = 1e-6;
+    static immutable double EPS = 1e-6;
     immutable T x, y, z;
-    immutable T length;
+
+    @property
+    immutable(T) length() const nothrow {
+        return (x*x + y*y  + z*z)^^0.5;
+    }
 
     public this(T x, T y, T z) nothrow pure {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.length = (x*x + y*y  + z*z)^^0.5;
     }
 
     override string toString() {
