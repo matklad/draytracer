@@ -32,12 +32,13 @@ void main(string[] argv){
     auto shapes = p.read();
 
 
-    init(argv);
+    //init(argv);
     auto origin = V.create(0, 0, 0);
     auto position = V.create(50, 50, 80);
     auto up = V.create(0, 1, 0);
     double dist = 80, w = 40, h = 30;
-    auto c = new Camera(position, up, dist, w, h, 120, 90);
+    //6.6 seconds
+    auto c = new Camera(position, up, dist, w, h, 160, 120);
     scene = new Scene(c, Color.white.scaleColor(0.1));
 
     foreach(s; shapes)
@@ -47,8 +48,8 @@ void main(string[] argv){
     auto light2 = new LightSource(V.create(-100, 0, 100), Color.white);
     scene.addLight(light1);
     scene.addLight(light2);
-
-    glutMainLoop();
+    display();
+    //glutMainLoop();
 }
 
 void init(string[] argv){
@@ -78,24 +79,28 @@ void init(string[] argv){
     glOrtho(0, w_width, 0, w_heigth, -100, 100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    glutDisplayFunc(&display);
+    //glutDisplayFunc(&display);
 
 }
 
-extern (C) nothrow void display()
+//extern (C) nothrow void display()
+void display()
 {
     double f(double x) nothrow {
         return max(0, min(1, x));
     }
     auto pixels = scene.render();
-    glClearColor(0.0, 0.0, 0.0, 0.0);
-    glClear(GL_COLOR_BUFFER_BIT);
-    glBegin(GL_POINTS);
+    //glClearColor(0.0, 0.0, 0.0, 0.0);
+    //glClear(GL_COLOR_BUFFER_BIT);
+    //glBegin(GL_POINTS);
+    auto total = 0;
     foreach(y, row; pixels)
         foreach(x, c; row) {
-            glColor3f(f(c.r), f(c.g), f(c.b));
-            glVertex2f(x+1, y);
+            total += c.r;
+            //glColor3f(f(c.r), f(c.g), f(c.b));
+            //glVertex2f(x+1, y);
         }
-    glEnd();
-    glFlush();
+    writeln(total);
+    //glEnd();
+    //glFlush();
 }
