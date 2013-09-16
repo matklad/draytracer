@@ -5,7 +5,7 @@ import std.math;
 
 alias immutable(Vec!double) V;
 alias V P;
-alias immutable(NVec!double) NV;
+alias V N;
 
 immutable struct Vec(T) {
     alias immutable(Vec!T) IV;
@@ -17,38 +17,31 @@ immutable struct Vec(T) {
         return (x*x + y*y  + z*z)^^0.5;
     }
 
-    public static IV create(T x, T y, T z) pure nothrow {
-        IV ret = {x:x, y:y, z:z};
-        return ret;
-    }
-
     string toString() {
-        return format("(%s, %s, %s)", x, y, z);
+        return "(%s, %s, %s)".format(x, y, z);
     }
 
     IV opUnary(string op)() nothrow {
         static if (op == "+")
             return this;
         else static if (op == "-")
-            return IV.create(-x, -y, -z);
-        else static assert(0, op~"Not implemented");
+            return IV(-x, -y, -z);
+        else static assert(0, op~" Not implemented");
     }
 
-    IV opBinary(string op)(IV that) nothrow
+    IV opBinary(string op)(auto ref IV that) nothrow
     if (op != "&" && op != "%") {
         static if (op == "+" || op == "-")
-            return mixin(format("IV.create(x %s that.x, y %s that.y, z %s that.z)", op, op, op));
-        else static if (op == "%")
-            return this.cross(that);
+            return mixin("IV(x %s that.x, y %s that.y, z %s that.z)".format(op, op, op));
         else static assert(0, "Not implemented");
     }
 
-    T opBinary(string op)(IV that) nothrow
+    T opBinary(string op)(auto ref IV that) nothrow
     if (op == "&") {
         return this.dot(that);
     }
 
-    IV opBinary(string op)(IV that) nothrow
+    IV opBinary(string op)(auto ref IV that) nothrow
     if (op == "%") {
         return this.cross(that);
     }
@@ -57,46 +50,43 @@ immutable struct Vec(T) {
         return (that - this).length < this.EPS;
     }
 
-    T dot(IV other) nothrow {
+    T dot(ref IV other) nothrow {
         return x*other.x + y*other.y + z*other.z;
     }
 
-    IV cross(IV other) nothrow {
+    IV cross(ref IV other) nothrow {
         auto u = other.x,
              v = other.y,
              t = other.z;
-        // cx cy cz
-        // x  y  z
-        // u  v  t
         auto cx = y*t - v*z,
              cy = u*z - x*t,
              cz = x*v - u*y;
-        return IV.create(cx, cy, cz);
+        return IV(cx, cy, cz);
     }
 
     IV scale(T f) nothrow {
-        return IV.create(x*f, y*f, z*f);
+        return IV(x*f, y*f, z*f);
     }
 
-    final immutable(NVec!T) norm() nothrow {
-        immutable(NVec!T) ret = { v: IV.create(x/length, y/length, z/length) };
-        return ret;
+    final immutable(Vec!T) norm() nothrow {
+        return IV(x/length, y/length, z/length);
     }
 }
 
-immutable struct NVec(T) {
-    immutable(Vec!T) v;
-    alias v this;
-    invariant() {
-        assert(abs(v.length - 1) < v.EPS);
-    }
-}
+//immutable struct NVec(T) {
+//    immutable(Vec!T) v;
+//    alias v this;
+//    invariant() {
+//        assert(abs(v.length - 1) < v.EPS);
+//    }
+//}
 
 unittest {
-    V a = V.create( 1, 1, 1);
-    V b = V.create(-1, 0, 1);
+    V a = V( 1, 1, 1);
+    V b = V(-1, 0, 1);
     auto dot = a & b;
     assert(abs(dot) < V.EPS);
     auto cross = a % b;
-    assert(cross == V.create(1, -2, 1));
+    auto c = V(1, -2, 1);
+    assert(cross == c);
 }

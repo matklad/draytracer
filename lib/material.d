@@ -5,10 +5,10 @@ import lib.color;
 alias immutable(Material) IMaterial;
 
 immutable class Material {
-    IColor ambient, diffuse, specular;
+    Color ambient, diffuse, specular;
     immutable(double) phong;
 
-    this(IColor ambient, IColor diffuse, IColor specular,
+    this(Color ambient, Color diffuse, Color specular,
          immutable(double) phong) immutable {
         this.ambient = ambient;
         this.diffuse = diffuse;

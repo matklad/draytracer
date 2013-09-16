@@ -3,6 +3,7 @@ module lib.shape;
 import std.conv;
 import std.algorithm;
 import std.typecons;
+import std.string;
 
 import lib.color;
 import lib.vec;
@@ -14,7 +15,7 @@ alias Nullable!(double, -1) MBDist;
 
 
 abstract class Shape {
-    IColor colorAt(P p) nothrow;
+    Color colorAt(P p) nothrow;
     N normAt(P p) nothrow;
     IMaterial material() nothrow;
     MBDist intersect(Ray r) nothrow;
@@ -25,16 +26,16 @@ class Sphere: Shape {
     P center;
     double radius;
     IMaterial material_;
-    IColor color;
+    Color color;
 
-    this(P center, double radius, IColor color=Color.white) nothrow {
+    this(P center, double radius, Color color=Color.white) nothrow {
         this.center = center;
         this.radius = radius;
         this.color = color;
         material_ = Material.simple;
     }
 
-    override IColor colorAt(P p) nothrow {
+    override Color colorAt(P p) nothrow {
         return this.color;
     }
 
@@ -45,7 +46,7 @@ class Sphere: Shape {
     override IMaterial material() { return material_; }
 
     override string toString() {
-        return format("S(%s, %s)", to!string(center), radius);
+        return "S(%s, %s)".format(to!string(center), radius);
     }
 
     override MBDist intersect(Ray r) nothrow {
@@ -74,16 +75,16 @@ class Sphere: Shape {
     unittest {
         import std.math;
 
-        auto center = V.create(0, 0, 0);
+        auto center = V(0, 0, 0);
         auto radius = 1;
         auto s = new Sphere(center, radius);
 
-        auto o = V.create(0, 0, 10);
+        auto o = V(0, 0, 10);
         auto r = Ray.fromAtoB(o, center);
         auto i = s.intersect(r);
         assert(abs(i - 9) < V.EPS);
 
-        auto d = V.create(1, 1, 1);
+        auto d = V(1, 1, 1);
         r = Ray.fromAtoB(center, d);
         i = s.intersect(r);
         assert(abs(i - 1) < V.EPS);
@@ -98,8 +99,8 @@ final class Triangle: Shape {
     N n;
     immutable double abDacXn, acDabXn;
     IMaterial material_;
-    IColor color;
-    this(P a, P b, P c, IColor color=Color.white) {
+    Color color;
+    this(P a, P b, P c, Color color=Color.white) {
         this.a = a;
         this.b = b;
         this.c = c;
@@ -115,7 +116,7 @@ final class Triangle: Shape {
         material_ = Material.simple;
     }
 
-    override IColor colorAt(P p) nothrow {
+    override Color colorAt(P p) nothrow {
         return this.color;
     }
 

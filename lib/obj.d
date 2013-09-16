@@ -25,7 +25,7 @@ class ObjParser {
             switch(l[0..2]) {
                 case "v ":
                     auto ns = to!(double[])(split(s));
-                    points ~= V.create(ns[0], ns[1], ns[2]);
+                    points ~= V(ns[0], ns[1], ns[2]);
                     break;
                 case "f ":
                     auto blocks = split(s);

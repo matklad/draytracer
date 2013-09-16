@@ -21,40 +21,42 @@ pragma(lib, "DerelictUtil");
 pragma(lib, "dl");
 
 Scene scene;
+int W = 640;
+int H = 480;
 
-void main(string[] argv){
+void prepareScene() {
     string[] lines;
     string buf;
     while ((buf = stdin.readln()) !is null)
         lines ~= buf.strip();
-
     auto p = new ObjParser(lines);
     auto shapes = p.read();
 
-
-    //init(argv);
-    auto origin = V.create(0, 0, 0);
-    auto position = V.create(50, 50, 80);
-    auto up = V.create(0, 1, 0);
+    auto origin = V(0, 0, 0);
+    auto position = V(50, 50, 80);
+    auto up = V(0, 1, 0);
     double dist = 80, w = 40, h = 30;
-    //6.6 seconds
-    auto c = new Camera(position, up, dist, w, h, 160, 120);
-    scene = new Scene(c, Color.white.scaleColor(0.1));
+    auto c = new Camera(position, up, dist, w, h, W, H);
+    scene = new Scene(c, Color.white.amplify(0.1));
 
     foreach(s; shapes)
         scene.addShape(s);
 
-    auto light1 = new LightSource(V.create(100, 0, 100), Color.white);
-    auto light2 = new LightSource(V.create(-100, 0, 100), Color.white);
+    auto light1 = new LightSource(V(100, 0, 100), Color.white);
+    auto light2 = new LightSource(V(-100, 0, 100), Color.white);
     scene.addLight(light1);
     scene.addLight(light2);
-    display();
-    //glutMainLoop();
+}
+
+void main(string[] argv){
+    prepareScene();
+    init(argv);
+    glutMainLoop();
 }
 
 void init(string[] argv){
-    const w_width = 120;
-    const w_heigth = 90;
+    const w_width = W;
+    const w_heigth = H;
     const w_title = "D-ray";
     DerelictGL3.load();
     DerelictFreeGLUT.load();
@@ -79,28 +81,23 @@ void init(string[] argv){
     glOrtho(0, w_width, 0, w_heigth, -100, 100);
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-    //glutDisplayFunc(&display);
-
+    glutDisplayFunc(&display);
 }
 
-//extern (C) nothrow void display()
-void display()
+extern (C) nothrow void display()
 {
     double f(double x) nothrow {
         return max(0, min(1, x));
     }
     auto pixels = scene.render();
-    //glClearColor(0.0, 0.0, 0.0, 0.0);
-    //glClear(GL_COLOR_BUFFER_BIT);
-    //glBegin(GL_POINTS);
-    auto total = 0;
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_POINTS);
     foreach(y, row; pixels)
         foreach(x, c; row) {
-            total += c.r;
-            //glColor3f(f(c.r), f(c.g), f(c.b));
-            //glVertex2f(x+1, y);
+            glColor3f(f(c.r), f(c.g), f(c.b));
+            glVertex2f(x+1, y);
         }
-    writeln(total);
-    //glEnd();
-    //glFlush();
+    glEnd();
+    glFlush();
 }

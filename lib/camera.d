@@ -12,7 +12,7 @@ class Camera {
     V up, right;
 
     this(P position, V up, double screenDist, double screenW, double screenH,
-         int resW=640, int resH=480, P view=P.create(0, 0, 0)) {
+         int resW=640, int resH=480, P view=P(0, 0, 0)) {
 
         this.position = position;
         this.view = view;
@@ -39,7 +39,6 @@ class Camera {
 
         auto shup = (y - my / 2) / my * screenH;
         auto shr  = (x - mx / 2) / mx * screenW;
-
         auto pointOnScreen = screenCenter + up.scale(shup) + right.scale(shr);
 
         return Ray.fromAtoB(position, pointOnScreen);

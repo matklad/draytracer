@@ -16,10 +16,10 @@ class Scene {
     Camera camera;
     Shape[] shapes = [];
     LightSource[] lights = [];
-    IColor background;
-    IColor light;
+    Color background;
+    Color light;
 
-    this(Camera camera, IColor light=Color.white, IColor background=Color.black) {
+    this(Camera camera, Color light=Color.white, Color background=Color.black) {
         this.camera = camera;
         this.background = background;
         this.light = light;
@@ -35,18 +35,17 @@ class Scene {
         return this;
     }
 
-    immutable(Color)[][] render() nothrow {
+    Color[][] render() nothrow {
         auto h = camera.resH,
              w = camera.resW;
-        alias RC = Rebindable!(IColor);
-        auto colors = new RC[][](h, w);
+        auto colors = new Color[][](h, w);
         foreach(y; 0..h)
             foreach(x; 0..w)
                 colors[y][x] = render(x, y);
-        return cast(IColor[][])colors;
+        return colors;
     }
 
-    IColor render(int x, int y) nothrow {
+    Color render(int x, int y) nothrow {
         auto ray = camera.apply(x, y);
         auto i = intersect(ray);
         if (i.isNull()) {
@@ -59,7 +58,7 @@ class Scene {
         }
     }
 
-    IColor shade(Ray view, Shape s, P p) nothrow {
+    Color shade(Ray view, Shape s, P p) nothrow {
         bool isVisible(Light l) nothrow {
             auto ret = intersect(Ray.fromDir(p, l.direction, true));
             return ret.isNull() || ret[1] > l.distance;
@@ -72,15 +71,15 @@ class Scene {
 
         auto visible = filter!(isVisible)(map!(l => l.shade(p, n))(lights));
 
-        Rebindable!(IColor) ambient  = Color.zro,
-                            diffuse  = Color.zro,
-                            specular = Color.zro;
+        Color ambient  = Color.zro,
+              diffuse  = Color.zro,
+              specular = Color.zro;
 
         ambient = baseColor * m.ambient * light;
         foreach(l; visible){
-            diffuse  = diffuse + (baseColor * l.color * m.diffuse).scaleColor(l.power);
+            diffuse  = diffuse + (baseColor * l.color.dup * m.diffuse).amplify(l.power);
             auto k = max(0, (rView & l.direction)) ^^ m.phong;
-            specular = specular + (l.color * m.specular).scaleColor(k);
+            specular = specular + (l.color.dup * m.specular).amplify(k);
         }
         return ambient + diffuse + specular;
     }
