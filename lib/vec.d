@@ -1,7 +1,7 @@
 module lib.vec;
 import std.stdio;
-import std.string: format;
-import std.math: abs;
+import std.string;
+import std.math;
 
 alias immutable(Vec!double) V;
 alias V P;
