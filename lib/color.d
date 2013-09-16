@@ -5,7 +5,7 @@ import lib.vec;
 struct Color {
     double r, g, b;
 
-    Color opBinary(string op)(in Color that) nothrow
+    Color opBinary(string op)(Color that) nothrow
     {
         static if (op == "+" || op == "*")
             return mixin("Color(r %s that.r, g %s that.g, b %s that.b)".format(op, op, op));

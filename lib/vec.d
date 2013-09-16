@@ -13,7 +13,7 @@ immutable struct Vec(T) {
     T x, y, z;
 
     @property
-    T length() {
+    T length() pure {
         return (x*x + y*y  + z*z)^^0.5;
     }
 
@@ -29,19 +29,19 @@ immutable struct Vec(T) {
         else static assert(0, op~" Not implemented");
     }
 
-    IV opBinary(string op)(auto ref IV that) nothrow
+    IV opBinary(string op)(auto ref IV that) pure nothrow
     if (op != "&" && op != "%") {
         static if (op == "+" || op == "-")
-            return mixin("IV(x %s that.x, y %s that.y, z %s that.z)".format(op, op, op));
+            return mixin("IV(x"~op~"that.x, y"~op~"that.y, z"~op~"that.z)");
         else static assert(0, "Not implemented");
     }
 
-    T opBinary(string op)(auto ref IV that) nothrow
+    T opBinary(string op)(auto ref IV that) pure nothrow
     if (op == "&") {
         return this.dot(that);
     }
 
-    IV opBinary(string op)(auto ref IV that) nothrow
+    IV opBinary(string op)(auto ref IV that) pure nothrow
     if (op == "%") {
         return this.cross(that);
     }
@@ -50,11 +50,11 @@ immutable struct Vec(T) {
         return (that - this).length < this.EPS;
     }
 
-    T dot(ref IV other) nothrow {
+    T dot(ref IV other) pure nothrow {
         return x*other.x + y*other.y + z*other.z;
     }
 
-    IV cross(ref IV other) nothrow {
+    IV cross(ref IV other) pure nothrow {
         auto u = other.x,
              v = other.y,
              t = other.z;
@@ -64,7 +64,7 @@ immutable struct Vec(T) {
         return IV(cx, cy, cz);
     }
 
-    IV scale(T f) nothrow {
+    IV scale(T f) pure nothrow {
         return IV(x*f, y*f, z*f);
     }
 

@@ -51,7 +51,8 @@ void prepareScene() {
 void main(string[] argv){
     prepareScene();
     init(argv);
-    glutMainLoop();
+    display();
+    //glutMainLoop();
 }
 
 void init(string[] argv){

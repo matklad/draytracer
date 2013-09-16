@@ -126,19 +126,23 @@ final class Triangle: Shape {
 
     override IMaterial material() { return material_; }
 
-    override MBDist intersect(Ray r) nothrow {
+    override MBDist intersect(Ray r) pure nothrow {
         auto none = MBDist(-1);
-        auto ao = a - r.origin;
         auto denom = r.direction & n;
         if (denom * denom < 0.00001)
             return none;
+
+        auto ao = a - r.origin;
         auto t = (ao & n) / denom;
+
         if (t < 0)
             return none;
+
         auto tdo = r.direction.scale(t) - ao;
         auto p = (tdo & acXn) / abDacXn;
         if (p < 0 || p > 1)
             return none;
+
         auto q = (tdo & abXn) / acDabXn;
         if (q < 0 || q > 1 || (p + q) > 1)
             return none;
