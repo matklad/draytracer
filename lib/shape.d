@@ -11,14 +11,11 @@ import lib.ray;
 import lib.material;
 
 
-alias Nullable!(double, -1) MBDist;
-
-
 abstract class Shape {
     Color colorAt(P p) nothrow;
     N normAt(P p) nothrow;
     IMaterial material() nothrow;
-    MBDist intersect(Ray r) nothrow;
+    double intersect(Ray r) nothrow;
 }
 
 
@@ -49,13 +46,13 @@ class Sphere: Shape {
         return "S(%s, %s)".format(to!string(center), radius);
     }
 
-    override MBDist intersect(Ray r) nothrow {
+    override double intersect(Ray r) nothrow {
         auto co = center - r.origin;
         auto a  = r.direction & r.direction;
         auto b  = r.direction & co;
         auto c  = (co & co) - radius * radius;
         auto d  = b*b - a*c;
-        auto none = MBDist(-1);
+        auto none = 10^^6;
         if (d < 0)
             return none;
 
@@ -67,8 +64,8 @@ class Sphere: Shape {
         if (t2 < 0)
             return none;
         if (t1 < 0)
-            return MBDist(t2);
-        return MBDist(t1);
+            return t2;
+        return t1;
     }
 
 
@@ -126,8 +123,8 @@ final class Triangle: Shape {
 
     override IMaterial material() { return material_; }
 
-    override MBDist intersect(Ray r) pure nothrow {
-        auto none = MBDist(-1);
+    override double intersect(Ray r) pure nothrow {
+        auto none = 10^^6;
         auto denom = r.direction & n;
         if (denom * denom < 0.00001)
             return none;
@@ -146,6 +143,6 @@ final class Triangle: Shape {
         auto q = (tdo & abXn) / acDabXn;
         if (q < 0 || q > 1 || (p + q) > 1)
             return none;
-        return MBDist(t);
+        return t;
     }
 }

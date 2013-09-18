@@ -91,19 +91,21 @@ class Scene {
     }
 
     Nullable!(Tuple!(Shape, double)) intersect(Ray ray) nothrow {
-        Nullable!(Tuple!(Shape, double)) ret;
+        Shape bs = null;
+        double bt = 10^^6;
         foreach(s; shapes){
             auto t = s.intersect(ray);
-            if(!t.isNull()){
-                if(ret.isNull()) {
-                    ret = Tuple!(Shape, double)(s, t);
-                } else {
-                    if(ret[1] > t) {
-                        ret[0] = s;
-                        ret[1] = t;
-                    }
-                }
+            if(bt > t) {
+                bs = s;
+                bt = t;
             }
+        }
+        Nullable!(Tuple!(Shape, double)) ret;
+        if (bt == 10^^6)
+            return ret;
+        else {
+            ret[0] = bs;
+            ret[1] = bt;
         }
         return ret;
     }
