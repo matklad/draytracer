@@ -29,19 +29,19 @@ immutable struct Vec(T) {
         else static assert(0, op~" Not implemented");
     }
 
-    IV opBinary(string op)(auto ref IV that) pure nothrow
+    IV opBinary(string op)(auto const ref IV that) pure nothrow
     if (op != "&" && op != "%") {
         static if (op == "+" || op == "-")
             return mixin("IV(x"~op~"that.x, y"~op~"that.y, z"~op~"that.z)");
         else static assert(0, "Not implemented");
     }
 
-    T opBinary(string op)(auto ref IV that) pure nothrow
+    T opBinary(string op)(auto const ref IV that) pure nothrow
     if (op == "&") {
         return this.dot(that);
     }
 
-    IV opBinary(string op)(auto ref IV that) pure nothrow
+    IV opBinary(string op)(auto const ref IV that) pure nothrow
     if (op == "%") {
         return this.cross(that);
     }
@@ -50,11 +50,11 @@ immutable struct Vec(T) {
         return (that - this).length < this.EPS;
     }
 
-    T dot(ref IV other) pure nothrow {
+    T dot(const ref IV other) pure nothrow {
         return x*other.x + y*other.y + z*other.z;
     }
 
-    IV cross(ref IV other) pure nothrow {
+    IV cross(const ref IV other) pure nothrow {
         auto u = other.x,
              v = other.y,
              t = other.z;
