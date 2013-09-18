@@ -71,6 +71,7 @@ class Scene {
 
         auto visible = filter!(isVisible)(map!(l => l.shade(p, n))(lights));
 
+
         Color ambient  = Color.zro,
               diffuse  = Color.zro,
               specular = Color.zro;
@@ -101,11 +102,8 @@ class Scene {
             }
         }
         Nullable!(Tuple!(Shape, double)) ret;
-        if (bt == 10^^6)
-            return ret;
-        else {
-            ret[0] = bs;
-            ret[1] = bt;
+        if (bt != 10^^6) {
+            ret = Tuple!(Shape, double)(bs, bt);
         }
         return ret;
     }
