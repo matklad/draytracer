@@ -52,7 +52,7 @@ void main(string[] argv){
     prepareScene();
     init(argv);
     display();
-    //glutMainLoop();
+    glutMainLoop();
 }
 
 void init(string[] argv){
